@@ -7,14 +7,16 @@ from wtforms.validators import DataRequired, Length
 from flask_bootstrap import Bootstrap
 
 
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////todo_list.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo_list.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = "KJHEF87638Y32J#@^%$^KHSDGV"
 
 
 db = SQLAlchemy(app)
 bootstrap = Bootstrap(app)
+
 
 
 ###===============>>> Forms <<<====================###
@@ -29,9 +31,11 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=10)])
 
 
+
 class RegisterationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=10)])
+
 
 ###================================================###
 
@@ -53,6 +57,7 @@ class TodoList(db.Model):
 # db.create_all()
 
 ###================================================###
+
 
 
 @app.route('/', )
@@ -110,6 +115,7 @@ def register():
         else:
             flash('Smething Went Wrong!')
     return render_template('login_register.html', form_type=form_type, form=form)
+    
 
 
 @app.route('/login', methods=['GET', 'POST'])
