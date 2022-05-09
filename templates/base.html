@@ -12,11 +12,9 @@
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark nav-space ">
       <div class="container-fluid">
         <a class="navbar-brand">Grind</a>
-        {% if not current_user.is_authenticated %}
+
         <ul class="navbar-nav">
-          <li>
-            <a class="nav-link" href="{{ url_for('home') }}">Home</a>
-          </li>
+          {% if not current_user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('login') }}">Login</a>
           </li>
@@ -25,10 +23,12 @@
           </li>
           {% else %}
           <li>
-            <a class="nav-link" href="{{ url_for('home') }}">Logout</a>
+            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
           </li>
           {% endif %}
         </ul>
+
+
       </div>
 
 
