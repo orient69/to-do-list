@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, url_for, redirect, flash
 from flask_login import login_manager, login_required, login_user, logout_user
-# from werkzeug.security import sa
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -16,7 +15,6 @@ app.config['SECRET_KEY'] = "KJHEF87638Y32J#@^%$^KHSDGV"
 
 db = SQLAlchemy(app)
 bootstrap = Bootstrap(app)
-
 
 
 ###===============>>> Forms <<<====================###
@@ -112,7 +110,6 @@ def register():
         else:
             flash('Smething Went Wrong!')
     return render_template('login_register.html', form_type=form_type, form=form)
-    
 
 
 @app.route('/login', methods=['GET', 'POST'])
