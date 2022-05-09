@@ -5,7 +5,7 @@
 <link href="static/css/style.css" rel="stylesheet" /> {% endblock %} 
 {% block content %}
 
-<div class="container-fluid">
+<div class="container-fluid form-container">
   <div class="mb-3 mt-3">
     <form action="{{ url_for('add') }}" method="POST">
       <div class="row">
@@ -37,7 +37,7 @@
         <tr>
             <td>
             {{ list.task }}
-            <a class="nav-item" href="{{ url_for('status', id=list.id) }}"
+            <a class="nav-item" href="{{ url_for('status', task_id=list.id) }}"
                 >Completed</a
             >
             </td>
@@ -64,7 +64,7 @@
             {% endif %}
             </td>
             <td>
-            <a class="nav-item" href="{{ url_for('delete' ,id=list.id) }}"
+            <a class="nav-item" href="{{ url_for('delete' ,task_id=list.id) }}"
                 >Delete</a
             >
             </td>

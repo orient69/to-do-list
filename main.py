@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, url_for, redirect, flash
-from flask_login import login_manager, login_required, login_user, logout_user
+from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -16,7 +16,13 @@ app.config['SECRET_KEY'] = "KJHEF87638Y32J#@^%$^KHSDGV"
 
 db = SQLAlchemy(app)
 bootstrap = Bootstrap(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
 
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.username.get(user_id)
 
 
 ###===============>>> Forms <<<====================###
@@ -31,8 +37,7 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=10)])
 
 
-
-class RegisterationForm(FlaskForm):
+class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=10)])
 
@@ -43,13 +48,15 @@ class RegisterationForm(FlaskForm):
 ###===============>>> Database <<<====================###
 
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+class User(db.Model, UserMixin):
+    __tablename__ = 'User'
+    user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.Integer, nullable=False)
 
 
 class TodoList(db.Model):
+    __tablename__ = 'Task'
     id = db.Column(db.Integer, primary_key=True)
     task = db.Column(db.String(100), nullable=False)
     status = db.Column(db.Boolean)
@@ -79,17 +86,17 @@ def add():
     return redirect(url_for('home'))
 
 
-@app.route('/complete/<id>')
-def status(id):
-    todo = TodoList.query.filter_by(id=int(id)).first()
+@app.route('/complete/<int:task_id>')
+def status(task_id):
+    todo = TodoList.query.filter_by(id=task_id).first()
     todo.status = True
     db.session.commit()
     return redirect(url_for('home'))
 
 
-@app.route('/delete/<id>')
-def delete(id):
-    to_delete = TodoList.query.filter_by(id=int(id)).first()
+@app.route('/delete/<int:task_id>')
+def delete(task_id):
+    to_delete = TodoList.query.filter_by(id=task_id).first()
     print(to_delete)
     db.session.delete(to_delete)
     db.session.commit()
@@ -99,7 +106,7 @@ def delete(id):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form_type = 'register'
-    form = RegisterationForm()
+    form = RegistrationForm()
     if request.method == 'POST':
         if form.validate_on_submit():
             user = User(
@@ -109,9 +116,8 @@ def register():
             db.session.add(user)
             db.session.commit()
             login_user(user=user)
-            next = request.args.get('next')
 
-            return redirect(next or url_for('home'))
+            return redirect(url_for('home'))
         else:
             flash('Smething Went Wrong!')
     return render_template('login_register.html', form_type=form_type, form=form)
