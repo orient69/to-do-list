@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, url_for, redirect, flash
 from flask_login import login_manager, login_required, login_user, logout_user
-from werkzeug.security import sa
+# from werkzeug.security import sa
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -8,17 +8,16 @@ from wtforms.validators import DataRequired, Length
 from flask_bootstrap import Bootstrap
 
 
-
 app = Flask(__name__)
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////todo_list.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = "KJHEF87638Y32J#@^%$^KHSDGV"
 
 
 db = SQLAlchemy(app)
 bootstrap = Bootstrap(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo_list.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 ###===============>>> Forms <<<====================###
 
@@ -32,11 +31,9 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=10)])
 
 
-
 class RegisterationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=10)])
-
 
 ###================================================###
 
@@ -58,7 +55,6 @@ class TodoList(db.Model):
 # db.create_all()
 
 ###================================================###
-
 
 
 @app.route('/', )
