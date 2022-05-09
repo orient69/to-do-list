@@ -1,0 +1,29 @@
+h3 {
+  text-align: center;
+}
+
+.nav-space {
+  padding: 5px 50px;
+  margin-bottom: 50px;
+
+}
+
+.btn-container {
+  display: grid;
+  place-content: center;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+
+
+.task-container {
+  padding: 20px;
+  background-color: antiquewhite;
+}
+
+
+.form-container {
+  display: grid;
+  place-content: center;
+  padding: 20px;
+}

@@ -1,0 +1,41 @@
+{% include "base.html" %} {% extends "bootstrap/base.html" %} {% import
+'bootstrap/wtf.html' as wtf %} {% block head %}
+<link href="static/css/style.css" rel="stylesheet" /> {% endblock %} {% block
+content %}
+
+<div class="container-fluid">
+  {% if form_type == 'login' %}
+    <div class="mb-3 mt-3 form-container">
+      <form method="POST" action="{{ url_for('login') }}" id="login_form">
+        {{ csrf_token }}
+        {{ wtf.quick_form(form) }}
+        <div class="btn-container">
+          <input type="submit" class="btn btn-dark" onclick="submitClick(id='login_form')" value="Login">
+        </div>
+      </form>
+
+      <div class="mb-3 mt-3">
+        <p>haven't signed up yet?</p>
+        <a href="{{ url_for('register') }}">Register</a>
+      </div>
+    </div>
+    {% else %}
+    <div class="row form-container">
+      <form method="POST" action="{{ url_for('register') }}" id="register_form">
+        
+        {{ csrf_token }}
+        {{ wtf.quick_form(form) }}
+        <div class="btn-container">
+          <input type="submit" value="Register" onclick="submitClick(id='register_form')" class="btn btn-dark">
+        </div>
+      </form>
+      <div class="mb-3 mt-3">
+        <p>alreay signed up?</p>
+        <a href="{{ url_for('login') }}">Login</a>
+      </div>
+    </div>
+  {% endif %}
+</div>
+<script src="static/js/script.js"></script>
+
+{% endblock %}

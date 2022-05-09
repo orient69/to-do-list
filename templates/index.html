@@ -1,0 +1,79 @@
+{% include "base.html" %}
+{% extends "bootstrap/base.html" %} 
+{% import 'bootstrap/wtf.html' as wtf %} 
+{% block head %}
+<link href="static/css/style.css" rel="stylesheet" /> {% endblock %} 
+{% block content %}
+
+<div class="container-fluid">
+  <div class="mb-3 mt-3">
+    <form action="{{ url_for('add') }}" method="POST">
+      <div class="row">
+        <h3>Add Your To-Dos</h3>
+        <div class="row">
+          {{ csrf_token }} {{ wtf.quick_form(form) }}
+          <div class="container-fluid btn-container">
+            <input
+              class="btn btn-dark btn-lg btn-block"
+              type="submit"
+              value="Add"
+            />
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="task-container"></div>
+    <table class="table table-borderless">
+        <thead>
+        <tr>
+            <th>To Do's</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for list in tasks %}
+
+        <tr>
+            <td>
+            {{ list.task }}
+            <a class="nav-item" href="{{ url_for('status', id=list.id) }}"
+                >Completed</a
+            >
+            </td>
+            <td>
+            {% if list.status: %}
+            <div class="form-check">
+                <input
+                class="form-check-input"
+                type="checkbox"
+                value="Competed"
+                checked
+                />
+                <label class="form-check-label"></label>
+            </div>
+            {% else %}
+            <div class="form-check">
+                <input
+                class="form-check-input"
+                type="checkbox"
+                value="In Compete"
+                />
+                <label class="form-check-label"></label>
+            </div>
+            {% endif %}
+            </td>
+            <td>
+            <a class="nav-item" href="{{ url_for('delete' ,id=list.id) }}"
+                >Delete</a
+            >
+            </td>
+        </tr>
+
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
