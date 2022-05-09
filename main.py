@@ -1,5 +1,10 @@
 from flask import Flask, render_template, request, url_for, redirect, flash
-from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
+from flask_login import (LoginManager,
+                         UserMixin,
+                         login_required,
+                         login_user,
+                         logout_user,
+                         current_user)
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -20,9 +25,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.username.get(user_id)
+
 
 
 ###===============>>> Forms <<<====================###
@@ -49,25 +52,35 @@ class RegistrationForm(FlaskForm):
 
 
 class User(db.Model, UserMixin):
-    __tablename__ = 'User'
-    user_id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = 'user'
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False, unique=True)
-    password = db.Column(db.Integer, nullable=False)
+    password = db.Column(db.String(25), nullable=False)
+    todolist = db.relationship('TodoList', back_populates='user')
+
+
 
 
 class TodoList(db.Model):
-    __tablename__ = 'Task'
+    __tablename__ = 'todolist'
     id = db.Column(db.Integer, primary_key=True)
     task = db.Column(db.String(100), nullable=False)
     status = db.Column(db.Boolean)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', back_populates='todolist')
 
 # db.create_all()
 
 ###================================================###
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
+
 
 @app.route('/', )
+@login_required
 def home():
     form = ToDos()
     tasks = TodoList.query.all()
@@ -78,7 +91,7 @@ def home():
 def add():
     form = ToDos()
     task = form.item.data
-    # checked =
+
     if form.validate_on_submit():
         task_db = TodoList(task=task)
         db.session.add(task_db)
@@ -119,21 +132,33 @@ def register():
 
             return redirect(url_for('home'))
         else:
-            flash('Smething Went Wrong!')
+            flash('Something Went Wrong!')
     return render_template('login_register.html', form_type=form_type, form=form)
     
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form_type = 'login'
     form = LoginForm()
-    if request.method == 'POST':
-        # if 
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
 
-        return redirect(url_for('home'))
-    return render_template('login_register.html', form_type=form_type, form=form)
+        user = User.query.filter_by(username=username).first()
+        if user:
+            if username == user.username and password == user.password:
+                login_user(user=user)
+                print('logged in')
+                return redirect(url_for('home'))
+        else:
+            flash('User  does not exist!')
+    return render_template('login_register.html', form_type=form_type, form=form, current_user=current_user)
 
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
 #############################################################
 if __name__ == '__main__':
