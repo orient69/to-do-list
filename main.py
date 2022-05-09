@@ -79,7 +79,7 @@ def load_user(user_id):
     return User.query.get(user_id)
 
 
-@app.route('/', )
+@app.route('/home', )
 @login_required
 def home():
     form = ToDos()
@@ -136,7 +136,7 @@ def register():
     return render_template('login_register.html', form_type=form_type, form=form)
     
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
     form_type = 'login'
     form = LoginForm()
